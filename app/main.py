@@ -88,6 +88,7 @@ def main():
         try:
             command = command_factory(parsed_command=parsed_command)
             command.execute()
+            continue
         except CommandNotFoundException as error:
             print(str(error))
 
