@@ -1,0 +1,65 @@
+{
+    "name": "Codecrafters Shell (Python)",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "python.defaultInterpreterPath": ".venv/bin/python",
+                "python.testing.pytestEnabled": true,
+                "python.testing.unittestEnabled": false,
+                "python.testing.pytestArgs": [
+                    "test"
+                ],
+                "editor.formatOnSave": true,
+                "terminal.integrated.defaultProfile.linux": "zsh",
+                "terminal.integrated.profiles.linux": {
+                    "zsh": {
+                        "path": "/usr/bin/zsh"
+                    }
+                },
+                "terminal.integrated.gpuAcceleration": "off",
+                "workbench.colorTheme": "Catppuccin Macchiato",
+                "workbench.iconTheme": "catppuccin-macchiato",
+                "cSpell.language": "en,pt,pt-BR",
+                "trailing-spaces.trimOnSave": true,
+                "trailing-spaces.highlightCurrentLine": false,
+                "[python]": {
+                    "editor.defaultFormatter": "charliermarsh.ruff",
+                    "editor.codeActionsOnSave": {
+                        "source.fixAll": "explicit",
+                        "source.organizeImports": "explicit"
+                    }
+                },
+                "[toml]": {
+                    "editor.defaultFormatter": "tamasfe.even-better-toml"
+                }
+            },
+            "extensions": [
+                "ms-python.python",
+                "ms-python.debugpy",
+                "ms-python.vscode-python-envs",
+                "charliermarsh.ruff",
+                "tamasfe.even-better-toml",
+                "redhat.vscode-yaml",
+                "esbenp.prettier-vscode",
+                "mikestead.dotenv",
+                "shardulm94.trailing-spaces",
+                "Catppuccin.catppuccin-vsc",
+                "Catppuccin.catppuccin-vsc-icons",
+                "bierner.markdown-mermaid",
+                "streetsidesoftware.code-spell-checker",
+                "streetsidesoftware.code-spell-checker-portuguese-brazilian",
+            ]
+        }
+    },
+    "postCreateCommand": "codecrafters ping",
+    "remoteEnv": {
+        "PATH": "${containerEnv:PATH}:/root/.codecrafters/bin"
+    },
+    "containerEnv": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONUNBUFFERED": "1"
+    }
+}
