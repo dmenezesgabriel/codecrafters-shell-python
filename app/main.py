@@ -1,7 +1,7 @@
 """
 Terminology
 
-REPL: Read-Eval-Print Loop
+REPL: Read-Eval-sys.stdout.write Loop
 
 """
 
@@ -50,14 +50,14 @@ class ExitCommand(Command):
 
 class EchoCommand(Command):
     def execute(self) -> None:
-        print(" ".join(self.args))
+        sys.stdout.write(" ".join(self.args))
 
 
 class TypeCommand(Command):
     def execute(self) -> None:
         command_name = self.args[0]
         if command_name in set(get_args(CommandType)):
-            print(f"{command_name} is a shell builtin")
+            sys.stdout.write(f"{command_name} is a shell builtin")
             return None
 
         paths = os.getenv("PATH").split(os.pathsep)
@@ -65,7 +65,7 @@ class TypeCommand(Command):
             candidate = os.path.join(directory, command_name)
 
             if os.path.isfile(candidate) and os.access(candidate, os.X_OK):
-                print(f"{command_name} is {candidate}")
+                sys.stdout.write(f"{command_name} is {candidate}")
                 return None
 
         raise CommandNotFoundException(f"{command_name}: not found")
@@ -98,11 +98,11 @@ def main():
             command = CommandRegistry.create_command(parsed_command=parsed_command)
             command.execute()
         except CommandNotFoundException as error:
-            print(str(error))
+            sys.stdout.write(str(error))
 
 
 if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print("\nGood Bye!")
+        sys.stdout.write("\nGood Bye!")
