@@ -4,15 +4,12 @@ import sys
 def main():
     while True:
         sys.stdout.write("$ ")
-        prompt = input("")
-        prompt_slices = str(prompt).split(" ")
-        command = prompt_slices[0]
-        args = prompt_slices[1:]
+        command = input("")
 
         if command == "exit":
             break
-        if command == "echo":
-            print(" ".join(args))
+        if command.startswith("echo"):
+            print(command[5:])
         else:
             print(f"{command}: not found")
 
