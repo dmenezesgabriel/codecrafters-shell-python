@@ -79,7 +79,7 @@ def command_factory(parsed_command: ParsedCommand) -> Command:
 
 def main():
     while True:
-        sys.stdout.write("$")
+        sys.stdout.write("$ ")
 
         command_line = input("")
 
