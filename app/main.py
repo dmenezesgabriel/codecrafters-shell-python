@@ -12,7 +12,7 @@ def main():
         if command == "exit":
             break
         if command == "echo":
-            print(" ".join(args) + "\n")
+            print(" ".join(args))
         else:
             print(f"{command}: not found")
 
