@@ -65,18 +65,19 @@ class TypeCommand(Command):
             raise CommandNotFoundException(f"{self.args[0]}: not found")
 
 
-COMMANDS: dict[CommandType, type[Command]] = {
-    "exit": ExitCommand,
-    "echo": EchoCommand,
-    "type": TypeCommand,
-}
+class CommandRegistry:
+    COMMANDS: dict[CommandType, type[Command]] = {
+        "exit": ExitCommand,
+        "echo": EchoCommand,
+        "type": TypeCommand,
+    }
 
-
-def command_factory(parsed_command: ParsedCommand) -> Command:
-    cls = COMMANDS.get(parsed_command.type)
-    if cls is None:
-        raise CommandNotFoundException(f"{parsed_command.type}: not found")
-    return cls(parsed_command.args)
+    @classmethod
+    def create_command(cls, parsed_command: ParsedCommand) -> Command:
+        command_cls = cls.COMMANDS.get(parsed_command.type)
+        if command_cls is None:
+            raise CommandNotFoundException(f"{parsed_command.type}: not found")
+        return command_cls(parsed_command.args)
 
 
 def main():
@@ -88,7 +89,7 @@ def main():
         parsed_command = CommandLineParser.parse_command_line(command_line=command_line)
 
         try:
-            command = command_factory(parsed_command=parsed_command)
+            command = CommandRegistry.create_command(parsed_command=parsed_command)
             command.execute()
         except CommandNotFoundException as error:
             print(str(error))
