@@ -3,6 +3,7 @@ FROM python:3.14-slim-bookworm
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     git \
+    gh \
     make \
     build-essential \
     zsh \
