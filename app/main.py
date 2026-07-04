@@ -5,6 +5,8 @@ REPL: Read-Eval-Print Loop
 
 """
 
+import os
+import shlex
 import sys
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
@@ -18,7 +20,7 @@ class CommandNotFoundException(Exception): ...
 
 @dataclass
 class ParsedCommand:
-    type: CommandType
+    type: Optional[CommandType]
     args: Optional[list[str]]
 
 
@@ -33,35 +35,40 @@ class Command(ABC):
 class CommandLineParser:
     @staticmethod
     def parse_command_line(command_line: str) -> Command:
-        tokens = command_line.split()
+        tokens = shlex.split(command_line)
+
+        if not tokens:
+            return ParsedCommand(type=None, args=[])
 
         return ParsedCommand(type=tokens[0], args=tokens[1:])
 
 
 class ExitCommand(Command):
-    def __init__(self, args) -> None:
-        self.args = args
-
     def execute(self):
         exit()
 
 
 class EchoCommand(Command):
-    def __init__(self, args) -> None:
-        self.args = args
-
     def execute(self):
         print(" ".join(self.args))
 
 
 class TypeCommand(Command):
-    def __init__(self, args) -> None:
-        self.args = args
-
     def execute(self):
         if self.args[0] in set(get_args(CommandType)):
             print(f"{self.args[0]} is a shell builtin")
         else:
+            paths = os.getenv("PATH").split(os.pathsep)
+            for path in paths:
+                for root, dirs, files in os.walk(path):
+                    for file in files:
+                        full_file_path = os.path.join(root, file)
+                        if not full_file_path == self.args[0]:
+                            continue
+                        is_executable = os.access(path, os.X_OK)
+                        if is_executable:
+                            print(f"{self.args[0]} is full_file_path")
+
             raise CommandNotFoundException(f"{self.args[0]}: not found")
 
 
