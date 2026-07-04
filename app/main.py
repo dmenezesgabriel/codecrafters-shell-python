@@ -61,6 +61,8 @@ class TypeCommand(Command):
     def execute(self):
         if self.args[0] in set(get_args(CommandType)):
             print(f"{self.args[0]} is a shell builtin")
+        else:
+            raise CommandNotFoundException(f"{self.args[0]}: not found")
 
 
 COMMANDS: dict[CommandType, type[Command]] = {
@@ -88,7 +90,6 @@ def main():
         try:
             command = command_factory(parsed_command=parsed_command)
             command.execute()
-            continue
         except CommandNotFoundException as error:
             print(str(error))
 
