@@ -5,6 +5,9 @@ def main():
     while True:
         sys.stdout.write("$ ")
         command = input("")
+        if command == "exit":
+            exit()
+
         print(f"{command}: not found")
 
 
