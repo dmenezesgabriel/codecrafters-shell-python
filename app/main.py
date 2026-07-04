@@ -44,32 +44,31 @@ class CommandLineParser:
 
 
 class ExitCommand(Command):
-    def execute(self):
+    def execute(self) -> None:
         exit()
 
 
 class EchoCommand(Command):
-    def execute(self):
+    def execute(self) -> None:
         print(" ".join(self.args))
 
 
 class TypeCommand(Command):
-    def execute(self):
-        if self.args[0] in set(get_args(CommandType)):
-            print(f"{self.args[0]} is a shell builtin")
-        else:
-            paths = os.getenv("PATH").split(os.pathsep)
-            for path in paths:
-                for root, dirs, files in os.walk(path):
-                    for file in files:
-                        full_file_path = os.path.join(root, file)
-                        if not full_file_path == self.args[0]:
-                            continue
-                        is_executable = os.access(path, os.X_OK)
-                        if is_executable:
-                            print(f"{self.args[0]} is full_file_path")
+    def execute(self) -> None:
+        command_name = self.args[0]
+        if command_name in set(get_args(CommandType)):
+            print(f"{command_name} is a shell builtin")
+            return None
 
-            raise CommandNotFoundException(f"{self.args[0]}: not found")
+        paths = os.getenv("PATH").split(os.pathsep)
+        for directory in paths:
+            candidate = os.path.join(directory, command_name)
+
+            if os.path.isfile(candidate) and os.access(candidate, os.X_OK):
+                print(f"{command_name} is {candidate}")
+                return None
+
+        raise CommandNotFoundException(f"{command_name}: not found")
 
 
 class CommandRegistry:
@@ -103,4 +102,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\nGood Bye!")
