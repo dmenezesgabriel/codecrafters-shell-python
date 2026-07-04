@@ -13,6 +13,9 @@ from typing import Literal, Optional, TypeAlias, get_args
 CommandType: TypeAlias = Literal["exit", "echo", "type"]
 
 
+class CommandNotFoundException(Exception): ...
+
+
 @dataclass
 class ParsedCommand:
     type: CommandType
@@ -70,13 +73,13 @@ COMMANDS: dict[CommandType, type[Command]] = {
 def command_factory(parsed_command: ParsedCommand) -> Command:
     cls = COMMANDS.get(parsed_command.type)
     if cls is None:
-        raise ValueError(f"{parsed_command.type}: not found")
+        raise CommandNotFoundException(f"{parsed_command.type}: not found")
     return cls(parsed_command.args)
 
 
 def main():
     while True:
-        sys.stdout.write("$ ")
+        sys.stdout.write("$")
 
         command_line = input("")
 
@@ -84,10 +87,9 @@ def main():
 
         try:
             command = command_factory(parsed_command=parsed_command)
-        except Exception as error:
+            command.execute()
+        except CommandNotFoundException as error:
             print(str(error))
-
-        command.execute()
 
 
 if __name__ == "__main__":
