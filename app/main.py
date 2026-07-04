@@ -13,9 +13,8 @@ def main():
             break
         if command == "echo":
             print(" ".join(args) + "\n")
-            break
-
-        print(f"{command}: not found")
+        else:
+            print(f"{command}: not found")
 
 
 if __name__ == "__main__":
