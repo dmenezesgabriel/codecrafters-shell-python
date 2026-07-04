@@ -50,14 +50,14 @@ class ExitCommand(Command):
 
 class EchoCommand(Command):
     def execute(self) -> None:
-        sys.stdout.write(" ".join(self.args))
+        sys.stdout.write(f"{' '.join(self.args)}\n")
 
 
 class TypeCommand(Command):
     def execute(self) -> None:
         command_name = self.args[0]
         if command_name in set(get_args(CommandType)):
-            sys.stdout.write(f"{command_name} is a shell builtin")
+            sys.stdout.write(f"{command_name} is a shell builtin\n")
             return None
 
         paths = os.getenv("PATH").split(os.pathsep)
@@ -65,7 +65,7 @@ class TypeCommand(Command):
             candidate = os.path.join(directory, command_name)
 
             if os.path.isfile(candidate) and os.access(candidate, os.X_OK):
-                sys.stdout.write(f"{command_name} is {candidate}")
+                sys.stdout.write(f"{command_name} is {candidate}\n")
                 return None
 
         raise CommandNotFoundException(f"{command_name}: not found")
@@ -98,11 +98,11 @@ def main():
             command = CommandRegistry.create_command(parsed_command=parsed_command)
             command.execute()
         except CommandNotFoundException as error:
-            sys.stdout.write(str(error))
+            sys.stdout.write(str(error) + "\n")
 
 
 if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        sys.stdout.write("\nGood Bye!")
+        sys.stdout.write("\nGood Bye!\n")
