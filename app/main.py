@@ -108,7 +108,7 @@ class CommandRegistry:
             return ExternalCommand(
                 parsed_command.name, executable=executable, args=parsed_command.args
             )
-        if command_cls is None:
+        else:
             raise CommandNotFoundException(f"{parsed_command.name}: not found")
 
     @staticmethod
