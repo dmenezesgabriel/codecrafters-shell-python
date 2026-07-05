@@ -27,7 +27,7 @@ class ParsedCommand:
 
 class Command(ABC):
     def __init__(self, name: str, args: list[str]):
-        self.name
+        self.name = name
         self.args = args
 
     @abstractmethod
