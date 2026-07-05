@@ -21,12 +21,13 @@ class CommandNotFoundException(Exception): ...
 
 @dataclass
 class ParsedCommand:
-    type: Optional[CommandType]
+    name: Optional[CommandType]
     args: Optional[list[str]]
 
 
 class Command(ABC):
-    def __init__(self, args: list[str]):
+    def __init__(self, name: str, args: list[str]):
+        self.name
         self.args = args
 
     @abstractmethod
@@ -39,9 +40,9 @@ class CommandLineParser:
         tokens = shlex.split(command_line)
 
         if not tokens:
-            return ParsedCommand(type=None, args=[])
+            return ParsedCommand(name=None, args=[])
 
-        return ParsedCommand(type=tokens[0], args=tokens[1:])
+        return ParsedCommand(name=tokens[0], args=tokens[1:])
 
 
 class ExecutableFinder:
@@ -82,12 +83,12 @@ class TypeCommand(Command):
 
 
 class ExternalCommand(Command):
-    def __init__(self, executable: str, args: list[str]):
-        super().__init__(args)
+    def __init__(self, name: str, executable: str, args: list[str]):
+        super().__init__(name, args)
         self.executable = executable
 
     def execute(self):
-        subprocess.run([self.executable, *self.args])
+        subprocess.run([self.name, *self.args], executable=self.executable)
 
 
 class CommandRegistry:
@@ -99,14 +100,16 @@ class CommandRegistry:
 
     @classmethod
     def create_command(cls, parsed_command: ParsedCommand) -> Command:
-        if CommandRegistry.is_builtin(parsed_command.type):
-            command_cls = cls.COMMANDS.get(parsed_command.type)
-            return command_cls(parsed_command.args)
-        executable = ExecutableFinder.find(parsed_command.type)
+        if CommandRegistry.is_builtin(parsed_command.name):
+            command_cls = cls.COMMANDS.get(parsed_command.name)
+            return command_cls(parsed_command.name, parsed_command.args)
+        executable = ExecutableFinder.find(parsed_command.name)
         if executable is not None:
-            return ExternalCommand(executable=executable, args=parsed_command.args)
+            return ExternalCommand(
+                parsed_command.name, executable=executable, args=parsed_command.args
+            )
         if command_cls is None:
-            raise CommandNotFoundException(f"{parsed_command.type}: not found")
+            raise CommandNotFoundException(f"{parsed_command.name}: not found")
 
     @staticmethod
     def is_builtin(command_name: str) -> bool:
