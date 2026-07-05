@@ -108,7 +108,7 @@ class CommandRegistry:
         if command_cls is None:
             raise CommandNotFoundException(f"{parsed_command.type}: not found")
 
-    @classmethod
+    @staticmethod
     def is_builtin(command_name: str) -> bool:
         return command_name in set(get_args(CommandType))
 
